@@ -9,11 +9,12 @@ import Main.Core.Menu
 
 
 class Main : KtxGame<KtxScreen>() {
+
     override fun create() {
         KtxAsync.initiate()
-        addScreen(MainScene())
-        addScreen(Menu())
+        addScreen(Menu(game = this))
+        addScreen(MainScene(game = this))
+        addScreen(SandScene(game = this))
         setScreen<Menu>()
     }
 }
-

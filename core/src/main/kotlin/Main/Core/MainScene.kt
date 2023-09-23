@@ -18,21 +18,53 @@ import ktx.box2d.earthGravity
 import com.badlogic.gdx.physics.box2d.Body
 import com.badlogic.gdx.physics.box2d.BodyDef
 import com.badlogic.gdx.physics.box2d.World
+import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.utils.viewport.ExtendViewport
+import ktx.actors.onClick
 import ktx.box2d.circle
 import ktx.graphics.use
+import ktx.scene2d.Scene2DSkin
+import ktx.scene2d.label
+import ktx.scene2d.scene2d
+import ktx.scene2d.textButton
 
-class MainScene : KtxScreen {
+class MainScene(private val game: KtxGame<KtxScreen>) : KtxScreen {
     private val image = Texture("logo.png".toInternalFile(), true).apply { setFilter(Linear, Linear) }
-    private val porn = Texture("box.png".toInternalFile(), true).apply { setFilter(Linear, Linear) }
+    private val porn = Texture("porn.png".toInternalFile(), true).apply { setFilter(Linear, Linear) }
     private val batch = SpriteBatch()
     private lateinit var renderer: ShapeRenderer
     private lateinit var world: World
     private lateinit var squareBody: Body
     private lateinit var ballBody: Body
-
+    lateinit var SceneLabel: Label
+    private val skin = Skin(Gdx.files.internal("uiskin.json"))
+    var transitionButton: TextButton
+    private val stage = Stage(ExtendViewport(350f, 180f))
     init {
+
+        Scene2DSkin.defaultSkin = skin
+
+        transitionButton = scene2d.textButton("Go to MENU", skin = skin) {
+            setPosition(20f, 20f) // Adjust position as needed
+            onClick {
+                game.setScreen<Menu>()
+            }
+
+
+        }
+        SceneLabel = scene2d.label("MainScene", skin = skin) {
+            setPosition(10f, 160f)
+        }
+
+        stage.addActor(SceneLabel)
+        stage.addActor(transitionButton)
         renderer = ShapeRenderer()
         world = createWorld(Vector2(0f, -9.81f))
+
+
 
         // Create a static square body at the center of the screen
         squareBody = world.body {
@@ -53,7 +85,7 @@ class MainScene : KtxScreen {
 
 
     override fun show() {
-
+        Gdx.input.inputProcessor = stage
 
     }
 
@@ -84,6 +116,10 @@ class MainScene : KtxScreen {
             it.color.set(0f, 0f, 1f, 1f)
             it.circle(ballBody.position.x, ballBody.position.y, 25f)
         }
+        batch.begin()
+        stage.act(delta)
+        stage.draw()
+        batch.end()
 
     }
 

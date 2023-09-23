@@ -1,6 +1,6 @@
 package Main.Core
+
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
@@ -10,43 +10,56 @@ import ktx.actors.onClick
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.app.clearScreen
+import ktx.assets.dispose
+import ktx.assets.disposeSafely
 import ktx.scene2d.Scene2DSkin
 import ktx.scene2d.scene2d
 import ktx.scene2d.textButton
+import Main.Core.Menu
+import com.badlogic.gdx.scenes.scene2d.ui.Label
+import ktx.scene2d.label
 
-
-
-class Menu(private val game: KtxGame<KtxScreen>) : KtxScreen {
+class SandScene (private val game: KtxGame<KtxScreen>) : KtxScreen {
     private val batch = SpriteBatch()
     private val stage = Stage(ExtendViewport(350f, 180f))
     private val skin = Skin(Gdx.files.internal("uiskin.json"))
-    var GoToMainBallButton: TextButton
-    var GoToSandSimButton: TextButton
+    var transitionButton: TextButton
+    lateinit var SceneLabel: Label
+
 
     init {
         Scene2DSkin.defaultSkin = skin
-        GoToMainBallButton = scene2d.textButton("Go to MainBall Scene", skin = skin) {
-            setPosition(130f, 90f) // Adjust position as needed
+
+        transitionButton = scene2d.textButton("Go to MENU", skin = skin) {
+            setPosition(20f, 20f) // Adjust position as needed
             onClick {
-                game.setScreen<MainScene>()
+                game.setScreen<Menu>()
             }
+
+
         }
-        GoToSandSimButton = scene2d.textButton("Go to Sand Sim", skin = skin) {
-            setPosition(130f, 60f) // Adjust position as needed
-            onClick {
-                game.setScreen<SandScene>()
-            }
+        SceneLabel = scene2d.label("SAND", skin = skin) {
+            setPosition(10f, 160f)
         }
-        stage.addActor(GoToSandSimButton)
-        stage.addActor(GoToMainBallButton)
+        stage.addActor(SceneLabel)
+        stage.addActor(transitionButton)
     }
 
     override fun show() {
         Gdx.input.inputProcessor = stage
     }
 
+
+    override fun hide() {
+
+    }
+
+    override fun pause() {
+
+    }
+
     override fun render(delta: Float) {
-        clearScreen(red = 0.5f, green = 0.0f, blue = 0.5f)
+        clearScreen(red = 0.0f, green = 0.0f, blue = 0.0f)
         batch.begin()
         stage.act(delta)
         stage.draw()
@@ -54,13 +67,17 @@ class Menu(private val game: KtxGame<KtxScreen>) : KtxScreen {
     }
 
     override fun resize(width: Int, height: Int) {
-        stage.viewport.update(width, height, true)
+
     }
 
-    override fun dispose() {
-        skin.getAll(BitmapFont::class.java).forEach { it.value.dispose() } // Dispose all fonts in the skin
-        skin.dispose()
-        batch.dispose()
-        stage.dispose()
+    override fun resume() {
+
     }
+
+
+    override fun dispose() {
+        batch.disposeSafely()
+        stage.disposeSafely()
+    }
+
 }
