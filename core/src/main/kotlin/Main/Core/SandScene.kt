@@ -152,6 +152,7 @@ class SandScene(private val game: KtxGame<KtxScreen>) : KtxScreen, InputProcesso
         sandTexture.disposeSafely()
         darkSandTexture.disposeSafely()
         redSandTexture.disposeSafely()
+
     }
     private fun spawnSand(screenX: Int, screenY: Int) {
         val worldPos = camera.unproject(Vector3(screenX.toFloat(), screenY.toFloat(), 0f))
